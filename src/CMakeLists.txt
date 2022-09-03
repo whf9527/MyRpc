@@ -3,7 +3,8 @@ set(SRC_LIST
     myrpcApplication.cc 
     myrpcConfig.cc 
     myrpcHeader.pb.cc 
-    myrpcProvider.cc)
+    myrpcProvider.cc
+    myrpcChannel.cc)
 
 add_library(myrpc ${SRC_LIST})
 

@@ -36,7 +36,8 @@ void MyrpcProvider::Run(){
     
     
     muduo::net::InetAddress address(ip, port);
-    std::cout<<"ip:  "<<ip<<"port:  "<<port<<std::endl;
+    std::cout<<"ip:"<<ip<<std::endl;
+    std::cout<<"port:"<<port<<std::endl;
     muduo::net::TcpServer server(&m_eventLoop, address, "RpcProvider");
     //绑定连接回调和消息读写方法;
     server.setConnectionCallback(std::bind(&MyrpcProvider::BuildConnect, this, std::placeholders::_1));

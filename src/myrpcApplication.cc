@@ -46,10 +46,10 @@ void MyrpcApplication::Init(int argc, char **argv){
     m_config.ConfigLoad(config_file.c_str());
 
 
-    std::cout<<"rpcserverip"<<m_config.SearchInfo("rpcserverip") <<std::endl;
-    std::cout<<"rpcserverport"<<m_config.SearchInfo("rpcserverport") <<std::endl;
-    std::cout<<"zookeeperip"<<m_config.SearchInfo("zookeeperip") <<std::endl;
-    std::cout<<"zookeeperport"<<m_config.SearchInfo("zookeeperport") <<std::endl;
+    // std::cout<<"rpcserverip"<<m_config.SearchInfo("rpcserverip") <<std::endl;
+    // std::cout<<"rpcserverport"<<m_config.SearchInfo("rpcserverport") <<std::endl;
+    // std::cout<<"zookeeperip"<<m_config.SearchInfo("zookeeperip") <<std::endl;
+    // std::cout<<"zookeeperport"<<m_config.SearchInfo("zookeeperport") <<std::endl;
 
 
 }

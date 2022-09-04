@@ -12,14 +12,14 @@ void MyrpcProvider::NotifyProvider(google::protobuf::Service *service){
 
     std::string serviceName = serviceDes->name();
     int methodCnt = serviceDes->method_count();
-    std::cout<<"service name:"<<serviceName<<std::endl;
+    // std::cout<<"service name:"<<serviceName<<std::endl;
     for (int i = 0; i < methodCnt; i++)
     {
         const google::protobuf::MethodDescriptor*  methodDes= serviceDes->method(i);
         const std::string & methodName = methodDes->name();
 
         service_info.m_method_map.insert(std::pair(methodName,methodDes));
-        std::cout<<"method name:"<<methodName<<std::endl;
+        // std::cout<<"method name:"<<methodName<<std::endl;
     }
 
     service_info.m_service = service;
@@ -36,8 +36,8 @@ void MyrpcProvider::Run(){
     
     
     muduo::net::InetAddress address(ip, port);
-    std::cout<<"ip:"<<ip<<std::endl;
-    std::cout<<"port:"<<port<<std::endl;
+    // std::cout<<"ip:"<<ip<<std::endl;
+    // std::cout<<"port:"<<port<<std::endl;
     muduo::net::TcpServer server(&m_eventLoop, address, "RpcProvider");
     //绑定连接回调和消息读写方法;
     server.setConnectionCallback(std::bind(&MyrpcProvider::BuildConnect, this, std::placeholders::_1));
@@ -128,7 +128,7 @@ void MyrpcProvider::BuildMessage(const muduo::net::TcpConnectionPtr& conn, muduo
                                                                     (this, 
                                                                     &MyrpcProvider::SendRpcResponse, 
                                                                     conn, response);
-
+                                                                    
     service->CallMethod(method,nullptr,request,response,done);
 
 

@@ -73,6 +73,7 @@ void MyrpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     if(client_fd == -1){
         char errtxt[512] = {0};
         sprintf(errtxt, "create socket error! errno:%d", errno);
+        controller->SetFailed(errtxt);
         return;
     }
     std::string ip = MyrpcApplication::GetInstance().GetConfig().SearchInfo("rpcserverip");
@@ -90,6 +91,7 @@ void MyrpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
         close(client_fd);
         char errtxt[512] = {0};
         sprintf(errtxt, "connect error! errno:%d", errno);
+        controller->SetFailed(errtxt);
         return;
 
     }
@@ -100,6 +102,7 @@ void MyrpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
         close(client_fd);
         char errtxt[512] = {0};
         sprintf(errtxt, "send error! errno:%d", errno);
+        controller->SetFailed(errtxt);
         return;
 
     }
@@ -111,15 +114,18 @@ void MyrpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
         close(client_fd);
         char errtxt[512] = {0};
         sprintf(errtxt, "recv error! errno:%d", errno);
+        controller->SetFailed(errtxt);
         return;
     }
     // std::string response_str(recv_buf, 0, recv_size);
     // if (response->ParseFromString(response_str))
     if (!response->ParseFromArray(recv_buf, recv_size))
     {
-        std::cout<<"response_str parse error:"<<recv_buf<<std::endl;
-        // std::cout<<r_req.pwd()<<std::endl;
+
         close(client_fd);
+        char errtxt[2048] = {0};
+        sprintf(errtxt, "response_str parse error:%s", recv_buf);
+        controller->SetFailed(errtxt);
         return;
     }
     close(client_fd); 

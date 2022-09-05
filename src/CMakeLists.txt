@@ -6,8 +6,9 @@ set(SRC_LIST
     myrpcProvider.cc
     myrpcChannel.cc
     myrpcController.cc
-    myrpcLog.cc)
+    myrpcLog.cc
+    zookeeperUtil.cc)
 
 add_library(myrpc ${SRC_LIST})
 
-target_link_libraries(myrpc muduo_net muduo_base pthread)
+target_link_libraries(myrpc muduo_net muduo_base pthread zookeeper_mt)

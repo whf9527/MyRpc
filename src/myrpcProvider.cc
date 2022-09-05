@@ -1,6 +1,7 @@
 #include "myrpcProvider.h"
 #include "myrpcApplication.h"
 #include "myrpcHeader.pb.h"
+#include "zookeeperUtil.h"
 #include <functional>
 
 
@@ -44,6 +45,27 @@ void MyrpcProvider::Run(){
     server.setMessageCallback(std::bind(&MyrpcProvider::BuildMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     //设置muduo库的线程数
     server.setThreadNum(4);
+
+
+
+    //发布到zookeeper中
+    ZkClient zkCli;
+    zkCli.Start();
+    for (auto &sp : m_service_map) 
+    {
+        // /service_name   /UserServiceRpc
+        std::string service_path = "/" + sp.first;
+        zkCli.Create(service_path.c_str(), nullptr, 0);
+        for (auto &mp : sp.second.m_method_map)
+        {
+            // /service_name/method_name   /UserServiceRpc/Login 存储当前这个rpc服务节点主机的ip和port
+            std::string method_path = service_path + "/" + mp.first;
+            char method_path_data[128] = {0};
+            sprintf(method_path_data, "%s:%d", ip.c_str(), port);
+            // ZOO_EPHEMERAL表示znode是一个临时性节点
+            zkCli.Create(method_path.c_str(), method_path_data, strlen(method_path_data), ZOO_EPHEMERAL);
+        }
+    }
 
 
     //启动网络服务 

@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include "myrpcApplication.h"
-
+#include "zookeeperUtil.h"
 void MyrpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
                           google::protobuf::RpcController* controller, 
                           const google::protobuf::Message* request,
@@ -76,8 +76,31 @@ void MyrpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
         controller->SetFailed(errtxt);
         return;
     }
-    std::string ip = MyrpcApplication::GetInstance().GetConfig().SearchInfo("rpcserverip");
-    uint16_t port = atoi(MyrpcApplication::GetInstance().GetConfig().SearchInfo("rpcserverport").c_str());
+    // std::string ip = MyrpcApplication::GetInstance().GetConfig().SearchInfo("rpcserverip");
+    // uint16_t port = atoi(MyrpcApplication::GetInstance().GetConfig().SearchInfo("rpcserverport").c_str());
+   
+    ZkClient zkCli;
+    zkCli.Start();
+    //  /UserServiceRpc/Login
+    std::string method_path = "/" + service_name + "/" + method_name;
+    // 127.0.0.1:8000
+    std::string host_data = zkCli.GetData(method_path.c_str());
+    if (host_data == "")
+    {
+        controller->SetFailed(method_path + " is not exist!");
+        return;
+    }
+    int idx = host_data.find(":");
+    if (idx == -1)
+    {
+        controller->SetFailed(method_path + " address is invalid!");
+        return;
+    }
+    std::string ip = host_data.substr(0, idx);
+    uint16_t port = atoi(host_data.substr(idx+1, host_data.size()-idx).c_str()); 
+   
+
+
     struct sockaddr_in servaddr;
     servaddr.sin_family = AF_INET;
     // address.sin_addr.s_addr = inet_addr(ip.c_str());
